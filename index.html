@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVENUES | NBA Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@200;300;400;500;600&family=Barlow+Condensed:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f5f5f7;
+  --white:#ffffff;
+  --black:#1d1d1f;
+  --dark:#111113;
+  --mid:#3a3a3c;
+  --muted:#8e8e93;
+  --border:#d2d2d7;
+  --border-light:#e5e5ea;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--black);font-family:'Barlow',sans-serif;font-weight:300;line-height:1.5;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:60px;background:rgba(245,245,247,0.88);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 60px;}
+.nav-logo{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:15px;letter-spacing:6px;text-transform:uppercase;color:var(--black);}
+.nav-links{display:flex;gap:40px;}
+.nav-links a{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);text-decoration:none;font-weight:400;transition:color .15s;}
+.nav-links a:hover{color:var(--black);}
+.nav-cta{background:var(--black);color:white;border:none;padding:8px 22px;font-family:'Barlow',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-weight:400;transition:opacity .2s;}
+.nav-cta:hover{opacity:.75;}
+
+/* HERO */
+.hero{padding-top:60px;background:var(--dark);color:white;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden;}
+.hero-left{display:flex;flex-direction:column;justify-content:flex-end;padding:100px 60px 80px;position:relative;z-index:2;}
+.hero-right{display:flex;align-items:flex-end;padding:100px 60px 80px;position:relative;z-index:2;border-left:1px solid rgba(255,255,255,0.06);}
+.hero-eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:32px;font-weight:400;}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(56px,7vw,96px);font-weight:200;line-height:0.95;letter-spacing:-1px;margin-bottom:36px;color:white;}
+.hero h1 strong{font-weight:600;display:block;}
+.hero-desc{max-width:420px;font-size:14px;color:rgba(255,255,255,0.45);line-height:1.9;margin-bottom:48px;font-weight:300;}
+.hero-actions{display:flex;gap:16px;align-items:center;}
+.btn-primary{background:white;color:var(--dark);border:none;padding:13px 32px;font-family:'Barlow',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-weight:500;transition:opacity .2s;}
+.btn-primary:hover{opacity:.85;}
+.btn-ghost{background:transparent;color:rgba(255,255,255,0.4);border:none;padding:13px 0;font-family:'Barlow',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;font-weight:400;text-decoration:underline;text-underline-offset:4px;transition:color .2s;}
+.btn-ghost:hover{color:white;}
+.hero-stats-panel{display:flex;flex-direction:column;width:100%;}
+.hero-stat-row{display:grid;grid-template-columns:1fr auto;align-items:center;padding:22px 0;border-bottom:1px solid rgba(255,255,255,0.07);}
+.hero-stat-row:first-child{border-top:1px solid rgba(255,255,255,0.07);}
+.hs-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);font-weight:400;}
+.hs-sub{font-size:9px;color:rgba(255,255,255,0.18);letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
+.hs-val{font-family:'Barlow Condensed',sans-serif;font-size:34px;font-weight:200;color:white;letter-spacing:-1px;}
+
+/* SECTIONS */
+.section-wrap{max-width:1280px;margin:0 auto;padding:0 60px;}
+.section{padding:96px 0;}
+.sec-divider{height:1px;background:var(--border);max-width:100%;margin:0;}
+.eyebrow{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:18px;font-weight:400;display:flex;align-items:center;gap:14px;}
+.eyebrow::after{content:'';flex:0 0 36px;height:1px;background:var(--border);}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(34px,4.5vw,52px);font-weight:300;line-height:1.0;letter-spacing:-0.5px;margin-bottom:18px;}
+.section-body{font-size:14px;color:var(--muted);max-width:500px;line-height:1.9;}
+
+/* HOW */
+.how-bg{background:var(--white);}
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);margin-top:64px;border-top:1px solid var(--border);border-left:1px solid var(--border);}
+.how-card{padding:36px 32px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);transition:background .2s;}
+.how-card:hover{background:var(--bg);}
+.how-num{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:200;line-height:1;color:var(--border);margin-bottom:24px;}
+.how-card h3{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:500;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
+.how-card p{font-size:13px;color:var(--muted);line-height:1.8;}
+
+/* COMP */
+.comparator-bg{background:var(--bg);}
+.comp-layout{display:grid;grid-template-columns:320px 1fr;margin-top:56px;border:1px solid var(--border);background:var(--white);}
+.comp-sidebar{padding:36px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:24px;}
+.comp-main{padding:36px;}
+.field-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:500;}
+.field-select{width:100%;background:var(--bg);border:1px solid var(--border);padding:11px 14px;color:var(--black);font-family:'Barlow',sans-serif;font-size:13px;font-weight:300;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6' fill='%23999'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;transition:border-color .15s;}
+.field-select:focus{border-color:var(--black);outline:none;}
+.run-btn{width:100%;padding:13px;background:var(--black);color:white;border:none;font-family:'Barlow',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:500;transition:opacity .2s;margin-top:auto;}
+.run-btn:hover{opacity:.8;}
+
+.comp-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;height:360px;text-align:center;}
+.comp-placeholder p{font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+/* RESULTS */
+#result{display:none;}
+.result-header{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-bottom:1px;}
+.result-team-block{background:var(--white);padding:28px 32px;}
+.rtb-name{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.rtb-prob{font-family:'Barlow Condensed',sans-serif;font-size:60px;font-weight:200;line-height:1;letter-spacing:-2px;}
+.rtb-prob.winner{color:var(--black);}
+.rtb-prob.loser{color:var(--border);}
+.rtb-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:6px;}
+
+.metric-section{background:var(--bg);border:1px solid var(--border);padding:28px 32px;margin-bottom:1px;}
+.metric-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:22px;}
+.mbar-row{margin-bottom:18px;}
+.mbar-labels{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;}
+.mbar-track{height:2px;background:var(--border-light);position:relative;}
+.mbar-fill{height:100%;background:var(--black);transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+.mbar-fill-r{position:absolute;top:0;right:0;height:100%;background:var(--muted);transition:width 1.2s cubic-bezier(.4,0,.2,1);}
+
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-bottom:1px;}
+.chart-block{background:var(--white);padding:28px 32px;}
+.chart-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:22px;}
+.chart-legend{display:flex;gap:20px;margin-top:14px;}
+.leg-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.leg-line{width:20px;height:2px;}
+
+.margin-block{background:var(--white);border:1px solid var(--border);padding:28px 32px;margin-bottom:1px;}
+
+.players-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);margin-bottom:1px;}
+.player-card{background:var(--white);padding:22px 28px;}
+.player-team{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:2px;}
+.player-name{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:400;letter-spacing:.5px;}
+.player-stats{display:flex;gap:20px;margin-top:12px;}
+.ps-item .ps-val{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:200;line-height:1;}
+.ps-item .ps-key{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+.odds-block{background:var(--dark);color:white;padding:28px 32px;}
+.odds-inner{display:grid;grid-template-columns:1fr 1fr;gap:32px;}
+.odds-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:4px;}
+.odds-team{font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;}
+.odds-val{font-family:'Barlow Condensed',sans-serif;font-size:44px;font-weight:200;letter-spacing:-1px;color:white;}
+
+/* PARLAY */
+.parlay-bg{background:var(--white);}
+.parlay-layout{display:grid;grid-template-columns:1fr 380px;margin-top:56px;border:1px solid var(--border);}
+.parlay-main{padding:40px;}
+.parlay-panel{padding:40px;border-left:1px solid var(--border);background:var(--bg);}
+.leg-row{display:grid;grid-template-columns:1fr 150px 36px;gap:10px;margin-bottom:10px;align-items:center;}
+.p-input{background:var(--white);border:1px solid var(--border);padding:11px 14px;color:var(--black);font-family:'Barlow',sans-serif;font-size:13px;font-weight:300;transition:border-color .15s;width:100%;}
+.p-input:focus{border-color:var(--black);outline:none;}
+.rem-btn{width:36px;height:38px;background:transparent;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;transition:all .15s;}
+.rem-btn:hover{border-color:var(--black);color:var(--black);}
+.add-leg{background:transparent;border:1px solid var(--border);padding:10px 18px;color:var(--muted);font-family:'Barlow',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:12px;margin-right:10px;transition:all .15s;}
+.add-leg:hover{border-color:var(--black);color:var(--black);}
+.calc-btn{background:var(--black);color:white;border:none;padding:10px 24px;font-family:'Barlow',sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-top:12px;transition:opacity .2s;}
+.calc-btn:hover{opacity:.8;}
+.panel-title{font-family:'Barlow Condensed',sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.r-metric{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+.r-metric:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.r-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.r-val{font-family:'Barlow Condensed',sans-serif;font-size:40px;font-weight:200;letter-spacing:-1px;line-height:1;}
+.r-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.ev-track{height:2px;background:var(--border-light);margin-top:14px;}
+.ev-fill{height:100%;background:var(--black);transition:width 1s;}
+
+.loader{display:none;padding:60px;text-align:center;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.loader::after{content:'';animation:ldots 1.2s infinite;}
+@keyframes ldots{0%{content:'.'}33%{content:'..'}66%{content:'...'}}
+
+.disc{background:var(--dark);color:rgba(255,255,255,0.25);padding:40px 60px;font-size:11px;line-height:1.9;}
+.disc-inner{max-width:1280px;margin:0 auto;}
+.disc strong{color:rgba(255,255,255,0.4);}
+
+footer{background:var(--dark);border-top:1px solid rgba(255,255,255,0.05);padding:28px 60px;display:flex;align-items:center;justify-content:space-between;}
+.footer-logo{font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:13px;letter-spacing:6px;text-transform:uppercase;color:rgba(255,255,255,0.5);}
+footer p{font-size:11px;color:rgba(255,255,255,0.2);letter-spacing:.3px;}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.f1{animation:fadeUp .6s ease both;}
+.f2{animation:fadeUp .6s .1s ease both;}
+.f3{animation:fadeUp .6s .2s ease both;}
+.f4{animation:fadeUp .6s .3s ease both;}
+
+#parlayResult{display:none;}
+#parlayEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+
+@media(max-width:900px){
+  nav{padding:0 20px;} .nav-links{display:none;}
+  .hero{grid-template-columns:1fr;} .hero-right{display:none;} .hero-left{padding:80px 24px 60px;}
+  .section-wrap{padding:0 24px;}
+  .how-grid{grid-template-columns:1fr 1fr;}
+  .comp-layout{grid-template-columns:1fr;} .comp-sidebar{border-right:none;border-bottom:1px solid var(--border);}
+  .charts-row{grid-template-columns:1fr;}
+  .players-grid{grid-template-columns:1fr;}
+  .parlay-layout{grid-template-columns:1fr;} .parlay-panel{border-left:none;border-top:1px solid var(--border);}
+  .result-header{grid-template-columns:1fr;}
+  footer{flex-direction:column;gap:10px;padding:20px 24px;text-align:center;}
+  .disc{padding:32px 24px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Avenues</div>
+  <div class="nav-links">
+    <a href="#methodology">Metodologia</a>
+    <a href="#compare">Analisis</a>
+    <a href="#parlay">Parlays</a>
+  </div>
+  <button class="nav-cta" onclick="go('#compare')">Iniciar</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow f1">Analisis cuantitativo · NBA · Temporada 2024-25</p>
+    <h1 class="f2">Decisiones<br><strong>basadas en datos.</strong></h1>
+    <p class="hero-desc f3">AVENUES combina estadisticas avanzadas NBA con simulacion estocástica de Monte Carlo para calcular probabilidades reales de victoria, cuotas justas de mercado y valor esperado en parlays.</p>
+    <div class="hero-actions f4">
+      <button class="btn-primary" onclick="go('#compare')">Iniciar analisis</button>
+      <button class="btn-ghost" onclick="go('#methodology')">Ver metodologia</button>
+    </div>
+  </div>
+  <div class="hero-right f3">
+    <div class="hero-stats-panel">
+      <div class="hero-stat-row">
+        <div><div class="hs-label">Simulaciones por analisis</div><div class="hs-sub">Monte Carlo estocastico</div></div>
+        <div class="hs-val">50,000</div>
+      </div>
+      <div class="hero-stat-row">
+        <div><div class="hs-label">Metricas por equipo</div><div class="hs-sub">Estadisticas avanzadas NBA</div></div>
+        <div class="hs-val">40+</div>
+      </div>
+      <div class="hero-stat-row">
+        <div><div class="hs-label">Equipos analizables</div><div class="hs-sub">Todos los equipos NBA activos</div></div>
+        <div class="hs-val">20</div>
+      </div>
+      <div class="hero-stat-row">
+        <div><div class="hs-label">Cobertura de datos</div><div class="hs-sub">Basado en temporada completa</div></div>
+        <div class="hs-val">100%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- METHODOLOGY -->
+<section class="section how-bg" id="methodology">
+  <div class="section-wrap">
+    <div class="eyebrow">Metodologia</div>
+    <h2 class="section-title">Como funciona AVENUES</h2>
+    <p class="section-body">Cada analisis pasa por cuatro capas de procesamiento estadistico antes de entregar un resultado. Sin estimaciones subjetivas — solo matematica.</p>
+    <div class="how-grid">
+      <div class="how-card"><div class="how-num">01</div><h3>Ingesta de datos</h3><p>Procesamos PPG, RPG, APG, FG%, 3P%, Offensive Rating, Defensive Rating, PACE y eficiencias avanzadas de la temporada vigente.</p></div>
+      <div class="how-card"><div class="how-num">02</div><h3>Modelado</h3><p>Generamos distribuciones de puntaje calibradas con el historial real del equipo, ajustando varianza, ventaja de cancha y ritmo de juego.</p></div>
+      <div class="how-card"><div class="how-num">03</div><h3>Monte Carlo</h3><p>Corremos 50,000 iteraciones del partido para construir una distribucion completa de resultados posibles y calcular probabilidades empiricas.</p></div>
+      <div class="how-card"><div class="how-num">04</div><h3>Cuotas y EV</h3><p>Convertimos probabilidades a cuotas justas de mercado y calculamos el valor esperado de cada apuesta para identificar ineficiencias.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- COMPARATOR -->
+<section class="section comparator-bg" id="compare">
+  <div class="section-wrap">
+    <div class="eyebrow">Comparador de equipos</div>
+    <h2 class="section-title">Simulador de partidos NBA</h2>
+    <p class="section-body">Selecciona dos equipos para correr el analisis completo con simulacion Monte Carlo, graficos de distribucion y comparacion estadistica.</p>
+    <div class="comp-layout">
+      <div class="comp-sidebar">
+        <div>
+          <div class="field-label">Equipo local</div>
+          <select class="field-select" id="team1">
+            <option value="">Seleccionar</option>
+            <option value="BOS">Boston Celtics</option>
+            <option value="MIL">Milwaukee Bucks</option>
+            <option value="MIA">Miami Heat</option>
+            <option value="PHI">Philadelphia 76ers</option>
+            <option value="NYK">New York Knicks</option>
+            <option value="CHI">Chicago Bulls</option>
+            <option value="CLE">Cleveland Cavaliers</option>
+            <option value="DEN">Denver Nuggets</option>
+            <option value="LAL">Los Angeles Lakers</option>
+            <option value="LAC">LA Clippers</option>
+            <option value="GSW">Golden State Warriors</option>
+            <option value="PHX">Phoenix Suns</option>
+            <option value="SAC">Sacramento Kings</option>
+            <option value="MEM">Memphis Grizzlies</option>
+            <option value="NOP">New Orleans Pelicans</option>
+            <option value="DAL">Dallas Mavericks</option>
+            <option value="OKC">Oklahoma City Thunder</option>
+            <option value="MIN">Minnesota Timberwolves</option>
+            <option value="POR">Portland Trail Blazers</option>
+            <option value="SAS">San Antonio Spurs</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label">Equipo visitante</div>
+          <select class="field-select" id="team2">
+            <option value="">Seleccionar</option>
+            <option value="BOS">Boston Celtics</option>
+            <option value="MIL">Milwaukee Bucks</option>
+            <option value="MIA">Miami Heat</option>
+            <option value="PHI">Philadelphia 76ers</option>
+            <option value="NYK">New York Knicks</option>
+            <option value="CHI">Chicago Bulls</option>
+            <option value="CLE">Cleveland Cavaliers</option>
+            <option value="DEN">Denver Nuggets</option>
+            <option value="LAL">Los Angeles Lakers</option>
+            <option value="LAC">LA Clippers</option>
+            <option value="GSW">Golden State Warriors</option>
+            <option value="PHX">Phoenix Suns</option>
+            <option value="SAC">Sacramento Kings</option>
+            <option value="MEM">Memphis Grizzlies</option>
+            <option value="NOP">New Orleans Pelicans</option>
+            <option value="DAL">Dallas Mavericks</option>
+            <option value="OKC">Oklahoma City Thunder</option>
+            <option value="MIN">Minnesota Timberwolves</option>
+            <option value="POR">Portland Trail Blazers</option>
+            <option value="SAS">San Antonio Spurs</option>
+          </select>
+        </div>
+        <div>
+          <div class="field-label">Ubicacion</div>
+          <select class="field-select" id="location">
+            <option value="home">Cancha local (equipo 1)</option>
+            <option value="neutral">Cancha neutral</option>
+            <option value="away">Cancha visitante (equipo 2)</option>
+          </select>
+        </div>
+        <button class="run-btn" onclick="runAnalysis()">Correr simulacion — 50,000 iteraciones</button>
+      </div>
+      <div class="comp-main">
+        <div id="compPlaceholder" class="comp-placeholder"><p>Selecciona dos equipos para ver el analisis</p></div>
+        <div class="loader" id="compLoader"></div>
+        <div id="result">
+          <div class="result-header" id="probHeader"></div>
+          <div class="metric-section" id="metricBars"></div>
+          <div class="charts-row">
+            <div class="chart-block">
+              <div class="chart-title">Distribucion Monte Carlo — puntajes simulados</div>
+              <canvas id="mcCanvas" height="160"></canvas>
+              <div class="chart-legend">
+                <div class="leg-item"><div class="leg-line" style="background:var(--black)"></div><span id="mcL1">Equipo 1</span></div>
+                <div class="leg-item"><div class="leg-line" style="background:var(--muted)"></div><span id="mcL2">Equipo 2</span></div>
+              </div>
+            </div>
+            <div class="chart-block">
+              <div class="chart-title">Radar de eficiencia — multidimensional</div>
+              <canvas id="radarCanvas" height="160"></canvas>
+              <div class="chart-legend">
+                <div class="leg-item"><div class="leg-line" style="background:var(--black)"></div><span id="radL1">Equipo 1</span></div>
+                <div class="leg-item"><div class="leg-line" style="background:var(--muted)"></div><span id="radL2">Equipo 2</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="margin-block">
+            <div class="chart-title">Histograma de margen de victoria — 50,000 simulaciones</div>
+            <canvas id="marginCanvas" height="120"></canvas>
+            <div style="margin-top:10px;font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Margen positivo = equipo local gana &nbsp;·&nbsp; margen negativo = equipo visitante gana</div>
+          </div>
+          <div style="border:1px solid var(--border);margin-bottom:1px;">
+            <div style="background:var(--bg);padding:14px 28px;border-bottom:1px solid var(--border);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Jugadores clave</div>
+            <div class="players-grid" id="playersGrid"></div>
+          </div>
+          <div class="odds-block" id="oddsBlock"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<!-- PARLAY -->
+<section class="section parlay-bg" id="parlay">
+  <div class="section-wrap">
+    <div class="eyebrow">Constructor de parlays</div>
+    <h2 class="section-title">Calcula tu parlay</h2>
+    <p class="section-body">Ingresa las apuestas en formato americano (+150, -110) o decimal (2.5). Calculamos cuota combinada, pago potencial y valor esperado.</p>
+    <div class="parlay-layout">
+      <div class="parlay-main">
+        <div style="display:grid;grid-template-columns:1fr 150px 36px;gap:10px;margin-bottom:10px;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Descripcion</div>
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Cuota</div>
+          <div></div>
+        </div>
+        <div id="parlayLegs">
+          <div class="leg-row">
+            <input class="p-input" placeholder="Ej: Celtics moneyline" type="text">
+            <input class="p-input odds-in" placeholder="-150 o 1.67" type="text">
+            <button class="rem-btn" onclick="remLeg(this)">x</button>
+          </div>
+          <div class="leg-row">
+            <input class="p-input" placeholder="Ej: Under 224.5 puntos" type="text">
+            <input class="p-input odds-in" placeholder="+110 o 2.1" type="text">
+            <button class="rem-btn" onclick="remLeg(this)">x</button>
+          </div>
+        </div>
+        <div>
+          <button class="add-leg" onclick="addLeg()">+ Agregar apuesta</button>
+          <button class="calc-btn" onclick="calcParlay()">Calcular parlay</button>
+        </div>
+        <div style="margin-top:28px;padding-top:28px;border-top:1px solid var(--border);">
+          <div class="field-label">Monto de apuesta (USD)</div>
+          <input class="p-input" id="betAmt" type="number" value="100" style="width:180px;">
+        </div>
+      </div>
+      <div id="parlayResult" class="parlay-panel">
+        <div class="panel-title">Resultado del parlay</div>
+        <div class="r-metric"><div class="r-label">Cuota total</div><div class="r-val" id="prOdds">—</div></div>
+        <div class="r-metric"><div class="r-label">Pago potencial</div><div class="r-val" id="prPayout">—</div><div class="r-sub" id="prProfit"></div></div>
+        <div class="r-metric"><div class="r-label">Probabilidad compuesta</div><div class="r-val" id="prProb">—</div><div class="ev-track"><div class="ev-fill" id="evFill" style="width:0%"></div></div></div>
+        <div class="r-metric"><div class="r-label">Valor esperado (EV)</div><div class="r-val" id="prEV">—</div><div class="r-sub" id="prEVsub"></div></div>
+      </div>
+      <div id="parlayEmpty" class="parlay-panel">
+        <p style="font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;">Los resultados apareceran aqui</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="sec-divider"></div>
+
+<div class="disc"><div class="disc-inner"><strong>Aviso legal.</strong> AVENUES es una plataforma de analisis estadistico y cuantitativo con fines informativos exclusivamente. Las simulaciones y probabilidades son modelos matematicos basados en datos historicos y no constituyen garantia de resultados futuros. Las apuestas deportivas implican riesgo real de perdida financiera. Apuesta de forma responsable. AVENUES no es una casa de apuestas, no acepta dinero ni facilita transacciones economicas de ningún tipo. Solo para mayores de 18 anos.</div></div>
+
+<footer>
+  <div class="footer-logo">Avenues</div>
+  <p>2025 AVENUES Analytics. Todos los derechos reservados.</p>
+</footer>
+
+<script>
+const TD={
+  BOS:{name:'Boston Celtics',pts:120.6,opp:110.2,reb:44.1,ast:26.8,fg:49.2,tp:39.1,defRtg:108.1,offRtg:121.4,pace:99.8,players:[{n:'J. Tatum',pts:26.9,reb:8.1,ast:4.9},{n:'J. Brown',pts:23.0,reb:5.5,ast:3.6}]},
+  MIL:{name:'Milwaukee Bucks',pts:118.7,opp:114.3,reb:46.2,ast:28.1,fg:48.1,tp:36.8,defRtg:112.4,offRtg:118.9,pace:101.2,players:[{n:'G. Antetokounmpo',pts:30.4,reb:11.5,ast:6.5},{n:'D. Lillard',pts:24.3,reb:4.4,ast:7.1}]},
+  MIA:{name:'Miami Heat',pts:111.6,opp:110.8,reb:42.3,ast:25.6,fg:46.8,tp:35.4,defRtg:110.8,offRtg:111.4,pace:97.1,players:[{n:'J. Butler',pts:21.1,reb:5.3,ast:5.3},{n:'B. Adebayo',pts:19.3,reb:10.4,ast:3.3}]},
+  PHI:{name:'Philadelphia 76ers',pts:113.8,opp:113.1,reb:43.8,ast:26.2,fg:47.3,tp:35.9,defRtg:113.2,offRtg:114.1,pace:98.4,players:[{n:'J. Embiid',pts:34.7,reb:11.0,ast:5.6},{n:'T. Maxey',pts:25.9,reb:3.7,ast:6.2}]},
+  NYK:{name:'New York Knicks',pts:114.5,opp:112.0,reb:44.7,ast:24.9,fg:47.0,tp:35.0,defRtg:112.0,offRtg:114.5,pace:96.2,players:[{n:'J. Brunson',pts:28.7,reb:3.6,ast:6.7},{n:'K. Towns',pts:21.8,reb:13.8,ast:3.0}]},
+  CHI:{name:'Chicago Bulls',pts:112.3,opp:114.5,reb:42.8,ast:24.3,fg:46.4,tp:34.1,defRtg:114.5,offRtg:112.3,pace:97.6,players:[{n:'Z. LaVine',pts:19.5,reb:5.0,ast:4.5},{n:'N. Vucevic',pts:18.6,reb:10.8,ast:3.4}]},
+  CLE:{name:'Cleveland Cavaliers',pts:115.2,opp:108.9,reb:45.3,ast:27.4,fg:48.5,tp:36.2,defRtg:108.9,offRtg:115.2,pace:97.8,players:[{n:'D. Mitchell',pts:28.0,reb:4.4,ast:5.0},{n:'E. Mobley',pts:15.7,reb:9.4,ast:2.8}]},
+  DEN:{name:'Denver Nuggets',pts:117.8,opp:111.6,reb:45.8,ast:28.9,fg:49.5,tp:36.4,defRtg:111.6,offRtg:117.8,pace:98.3,players:[{n:'N. Jokic',pts:26.4,reb:12.4,ast:9.0},{n:'J. Murray',pts:21.2,reb:4.1,ast:6.5}]},
+  LAL:{name:'Los Angeles Lakers',pts:116.1,opp:113.8,reb:43.6,ast:27.2,fg:48.0,tp:35.8,defRtg:113.8,offRtg:116.1,pace:100.1,players:[{n:'L. James',pts:25.7,reb:7.3,ast:8.3},{n:'A. Davis',pts:24.7,reb:12.6,ast:3.5}]},
+  LAC:{name:'LA Clippers',pts:113.0,opp:113.5,reb:42.5,ast:25.8,fg:46.9,tp:36.0,defRtg:113.5,offRtg:113.0,pace:97.0,players:[{n:'K. Leonard',pts:23.8,reb:6.1,ast:3.6},{n:'J. Harden',pts:16.6,reb:5.3,ast:8.5}]},
+  GSW:{name:'Golden State Warriors',pts:118.0,opp:115.2,reb:43.4,ast:30.1,fg:47.8,tp:38.5,defRtg:115.2,offRtg:118.0,pace:100.4,players:[{n:'S. Curry',pts:26.4,reb:4.5,ast:5.1},{n:'K. Thompson',pts:17.9,reb:3.5,ast:2.3}]},
+  PHX:{name:'Phoenix Suns',pts:116.3,opp:115.0,reb:43.0,ast:26.5,fg:47.4,tp:35.3,defRtg:115.0,offRtg:116.3,pace:99.2,players:[{n:'D. Booker',pts:27.8,reb:4.5,ast:6.9},{n:'B. Beal',pts:18.2,reb:4.0,ast:5.2}]},
+  SAC:{name:'Sacramento Kings',pts:119.5,opp:118.7,reb:43.9,ast:28.3,fg:48.4,tp:36.7,defRtg:118.7,offRtg:119.5,pace:103.1,players:[{n:'D. Fox',pts:26.7,reb:3.8,ast:6.0},{n:'D. Sabonis',pts:19.3,reb:13.5,ast:8.2}]},
+  MEM:{name:'Memphis Grizzlies',pts:111.8,opp:114.2,reb:44.4,ast:26.1,fg:46.5,tp:34.8,defRtg:114.2,offRtg:111.8,pace:99.7,players:[{n:'J. Morant',pts:25.1,reb:5.6,ast:8.1},{n:'D. Bane',pts:20.2,reb:4.1,ast:2.9}]},
+  NOP:{name:'New Orleans Pelicans',pts:112.9,opp:112.1,reb:43.7,ast:27.0,fg:47.2,tp:35.2,defRtg:112.1,offRtg:112.9,pace:97.5,players:[{n:'Z. Williamson',pts:22.9,reb:5.8,ast:4.6},{n:'B. Ingram',pts:20.8,reb:5.1,ast:5.3}]},
+  DAL:{name:'Dallas Mavericks',pts:117.5,opp:113.2,reb:42.8,ast:26.4,fg:48.3,tp:37.9,defRtg:113.2,offRtg:117.5,pace:98.0,players:[{n:'L. Doncic',pts:33.9,reb:9.2,ast:9.8},{n:'K. Irving',pts:24.0,reb:5.0,ast:5.2}]},
+  OKC:{name:'Oklahoma City Thunder',pts:117.2,opp:110.8,reb:45.1,ast:28.5,fg:47.9,tp:37.2,defRtg:110.8,offRtg:117.2,pace:99.5,players:[{n:'S. Gilgeous-A.',pts:30.1,reb:5.5,ast:6.3},{n:'J. Williams',pts:16.6,reb:4.9,ast:2.8}]},
+  MIN:{name:'Minnesota Timberwolves',pts:113.6,opp:109.7,reb:44.8,ast:26.8,fg:47.1,tp:36.5,defRtg:109.7,offRtg:113.6,pace:97.3,players:[{n:'A. Edwards',pts:25.9,reb:5.4,ast:5.1},{n:'R. Gobert',pts:14.0,reb:12.7,ast:1.8}]},
+  POR:{name:'Portland Trail Blazers',pts:108.4,opp:118.3,reb:42.1,ast:24.5,fg:45.8,tp:34.2,defRtg:118.3,offRtg:108.4,pace:99.1,players:[{n:'S. Sharpe',pts:18.4,reb:5.1,ast:4.2},{n:'J. Grant',pts:15.6,reb:3.8,ast:1.9}]},
+  SAS:{name:'San Antonio Spurs',pts:107.3,opp:119.8,reb:41.8,ast:23.7,fg:45.2,tp:33.8,defRtg:119.8,offRtg:107.3,pace:98.2,players:[{n:'V. Wembanyama',pts:21.4,reb:10.6,ast:3.9},{n:'D. Murray',pts:14.3,reb:2.8,ast:5.9}]},
+};
+
+function go(id){document.querySelector(id).scrollIntoView({behavior:'smooth'});}
+function gauss(){let u=0,v=0;while(u===0)u=Math.random();while(v===0)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function p2a(p){if(p>=.5)return String(Math.round(-p/(1-p)*100));return'+'+String(Math.round((1-p)/p*100));}
+
+function runAnalysis(){
+  const k1=document.getElementById('team1').value;
+  const k2=document.getElementById('team2').value;
+  const loc=document.getElementById('location').value;
+  if(!k1||!k2){alert('Selecciona ambos equipos.');return;}
+  if(k1===k2){alert('Selecciona equipos diferentes.');return;}
+  document.getElementById('compPlaceholder').style.display='none';
+  document.getElementById('result').style.display='none';
+  document.getElementById('compLoader').style.display='block';
+  setTimeout(()=>{
+    document.getElementById('compLoader').style.display='none';
+    document.getElementById('result').style.display='block';
+    buildResult(TD[k1],TD[k2],loc);
+  },1600);
+}
+
+function buildResult(t1,t2,loc){
+  const N=50000;
+  const sc1=[],sc2=[],margins=[];
+  let w1=0;
+  const ha=loc==='home'?2.5:(loc==='away'?-2.5:0);
+  for(let i=0;i<N;i++){
+    const e1=(t1.offRtg/t2.defRtg)*(t1.pace/100);
+    const e2=(t2.offRtg/t1.defRtg)*(t2.pace/100);
+    const s1=Math.round(e1*100+gauss()*8.5+ha);
+    const s2=Math.round(e2*100+gauss()*8.5);
+    sc1.push(s1);sc2.push(s2);margins.push(s1-s2);
+    if(s1>s2)w1++;
+  }
+  const p1=+(w1/N*100).toFixed(1);
+  const p2=+(100-p1).toFixed(1);
+  const isW1=p1>=50;
+
+  document.getElementById('probHeader').innerHTML=`
+    <div class="result-team-block">
+      <div class="rtb-name">${t1.name} · Local</div>
+      <div class="rtb-prob ${isW1?'winner':'loser'}">${p1}%</div>
+      <div class="rtb-label">probabilidad de victoria</div>
+    </div>
+    <div class="result-team-block">
+      <div class="rtb-name">${t2.name} · Visitante</div>
+      <div class="rtb-prob ${!isW1?'winner':'loser'}">${p2}%</div>
+      <div class="rtb-label">probabilidad de victoria</div>
+    </div>`;
+
+  const cats=[
+    {l:'Puntos por partido (PPG)',v1:t1.pts,v2:t2.pts,mn:100,mx:130},
+    {l:'Offensive Rating',v1:t1.offRtg,v2:t2.offRtg,mn:100,mx:130},
+    {l:'Def. Rating (menor = mejor)',v1:140-t1.defRtg,v2:140-t2.defRtg,mn:18,mx:38},
+    {l:'Porcentaje triples (3P%)',v1:t1.tp,v2:t2.tp,mn:30,mx:42},
+    {l:'Rebotes por partido',v1:t1.reb,v2:t2.reb,mn:38,mx:50},
+    {l:'Asistencias por partido',v1:t1.ast,v2:t2.ast,mn:20,mx:32},
+    {l:'Field Goal % (FG%)',v1:t1.fg,v2:t2.fg,mn:42,mx:52},
+  ];
+  document.getElementById('metricBars').innerHTML=
+    `<div class="metric-title">Metricas avanzadas — ${t1.name} vs ${t2.name}</div>`+
+    cats.map(c=>{
+      const r=c.mx-c.mn;
+      const p1=Math.max(0,Math.min(100,(c.v1-c.mn)/r*100));
+      const p2=Math.max(0,Math.min(100,(c.v2-c.mn)/r*100));
+      const c1=c.v1>=c.v2?'var(--black)':'var(--muted)';
+      const c2=c.v2>c.v1?'var(--black)':'var(--muted)';
+      return `<div class="mbar-row">
+        <div class="mbar-labels">
+          <span style="color:${c1};font-weight:${c.v1>=c.v2?'500':'300'}">${c.v1.toFixed(1)}</span>
+          <span style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted)">${c.l}</span>
+          <span style="color:${c2};font-weight:${c.v2>c.v1?'500':'300'}">${c.v2.toFixed(1)}</span>
+        </div>
+        <div class="mbar-track">
+          <div class="mbar-fill" style="width:${p1}%"></div>
+          <div class="mbar-fill-r" style="width:${p2}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+
+  document.getElementById('mcL1').textContent=t1.name;
+  document.getElementById('mcL2').textContent=t2.name;
+  document.getElementById('radL1').textContent=t1.name;
+  document.getElementById('radL2').textContent=t2.name;
+
+  setTimeout(()=>{drawMC(sc1,sc2);drawRadar(t1,t2);drawMargin(margins);},80);
+
+  const allP=[...t1.players.map(p=>({...p,team:t1.name})),...t2.players.map(p=>({...p,team:t2.name}))];
+  document.getElementById('playersGrid').innerHTML=allP.map(p=>`
+    <div class="player-card">
+      <div class="player-team">${p.team}</div>
+      <div class="player-name">${p.n}</div>
+      <div class="player-stats">
+        <div class="ps-item"><div class="ps-val">${p.pts}</div><div class="ps-key">PTS</div></div>
+        <div class="ps-item"><div class="ps-val">${p.reb}</div><div class="ps-key">REB</div></div>
+        <div class="ps-item"><div class="ps-val">${p.ast}</div><div class="ps-key">AST</div></div>
+      </div>
+    </div>`).join('');
+
+  const ml1=p2a(p1/100),ml2=p2a(p2/100);
+  document.getElementById('oddsBlock').innerHTML=`
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:20px;">Cuotas justas de mercado — calculadas desde probabilidades Monte Carlo</div>
+    <div class="odds-inner">
+      <div><div class="odds-label">Equipo local</div><div class="odds-team">${t1.name}</div><div class="odds-val">${ml1}</div></div>
+      <div><div class="odds-label">Equipo visitante</div><div class="odds-team">${t2.name}</div><div class="odds-val">${ml2}</div></div>
+    </div>`;
+}
+
+function getCanvasDims(id,h){
+  const c=document.getElementById(id);
+  const dpr=window.devicePixelRatio||1;
+  const W=c.parentElement.clientWidth-64;
+  c.width=W*dpr;c.height=h*dpr;c.style.width=W+'px';c.style.height=h+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);ctx.clearRect(0,0,W,h);
+  return{c,ctx,W,H:h};
+}
+
+function drawMC(s1,s2){
+  const{c,ctx,W,H}=getCanvasDims('mcCanvas',160);
+  const bins=40,mn=80,mx=155,bw=(mx-mn)/bins;
+  const h1=new Array(bins).fill(0),h2=new Array(bins).fill(0);
+  s1.forEach(v=>{const b=Math.floor((v-mn)/bw);if(b>=0&&b<bins)h1[b]++;});
+  s2.forEach(v=>{const b=Math.floor((v-mn)/bw);if(b>=0&&b<bins)h2[b]++;});
+  const pk=Math.max(...h1,...h2);
+  const pad={l:20,r:8,t:8,b:24};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=pad.t+cH/4*i;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(pad.l+cW,y);ctx.stroke();}
+  function curve(h,col,fa){
+    const pts=h.map((v,i)=>({x:pad.l+(i+.5)/bins*cW,y:pad.t+cH-(v/pk)*cH}));
+    ctx.beginPath();ctx.moveTo(pts[0].x,pad.t+cH);ctx.lineTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y);}
+    ctx.lineTo(pts[pts.length-1].x,pad.t+cH);ctx.closePath();
+    ctx.fillStyle=`rgba(${col},${fa})`;ctx.fill();
+    ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++){const cx=(pts[i-1].x+pts[i].x)/2;ctx.bezierCurveTo(cx,pts[i-1].y,cx,pts[i].y,pts[i].x,pts[i].y);}
+    ctx.strokeStyle=`rgba(${col},.85)`;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  curve(h1,'29,29,31',.12);curve(h2,'142,142,147',.18);
+  ctx.fillStyle='rgba(0,0,0,0.25)';ctx.font='9px Barlow';ctx.textAlign='center';
+  for(let i=0;i<=4;i++)ctx.fillText(Math.round(mn+(mx-mn)*i/4),pad.l+cW*i/4,H-6);
+}
+
+function drawRadar(t1,t2){
+  const{c,ctx,W,H}=getCanvasDims('radarCanvas',160);
+  const cx=W/2,cy=H/2+6,r=Math.min(W,H)/2-22;
+  const axes=[
+    {l:'Ataque',v1:t1.pts,v2:t2.pts,mn:100,mx:125},
+    {l:'OF Rtg',v1:t1.offRtg,v2:t2.offRtg,mn:105,mx:125},
+    {l:'3P%',v1:t1.tp,v2:t2.tp,mn:32,mx:42},
+    {l:'Rebotes',v1:t1.reb,v2:t2.reb,mn:38,mx:50},
+    {l:'Asist.',v1:t1.ast,v2:t2.ast,mn:22,mx:32},
+    {l:'Defensa',v1:140-t1.defRtg,v2:140-t2.defRtg,mn:18,mx:35},
+  ];
+  const N=axes.length;
+  const ang=i=>-Math.PI/2+(2*Math.PI/N)*i;
+  ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.lineWidth=1;
+  [.25,.5,.75,1].forEach(p=>{
+    ctx.beginPath();
+    axes.forEach((_,i)=>{const a=ang(i);i===0?ctx.moveTo(cx+Math.cos(a)*r*p,cy+Math.sin(a)*r*p):ctx.lineTo(cx+Math.cos(a)*r*p,cy+Math.sin(a)*r*p);});
+    ctx.closePath();ctx.stroke();
+  });
+  axes.forEach((_,i)=>{const a=ang(i);ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);ctx.strokeStyle='rgba(0,0,0,0.06)';ctx.stroke();});
+  function plot(team,col,fa){
+    ctx.beginPath();
+    axes.forEach((ax,i)=>{
+      const pct=Math.max(0,Math.min(1,(team===1?ax.v1:ax.v2-ax.mn)/(ax.mx-ax.mn)));
+      const a=ang(i),px=cx+Math.cos(a)*r*pct,py=cy+Math.sin(a)*r*pct;
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    });
+    ctx.closePath();ctx.fillStyle=`rgba(${col},${fa})`;ctx.fill();ctx.strokeStyle=`rgba(${col},.8)`;ctx.lineWidth=1.5;ctx.stroke();
+  }
+  plot(1,'29,29,31',.1);plot(2,'142,142,147',.15);
+  ctx.fillStyle='rgba(0,0,0,0.4)';ctx.font='9px Barlow';ctx.textAlign='center';ctx.textBaseline='middle';
+  axes.forEach((ax,i)=>{const a=ang(i);ctx.fillText(ax.l,cx+Math.cos(a)*(r+13),cy+Math.sin(a)*(r+13));});
+}
+
+function drawMargin(margins){
+  const{c,ctx,W,H}=getCanvasDims('marginCanvas',120);
+  const bins=50,mn=-40,mx=40,bw=(mx-mn)/bins;
+  const hist=new Array(bins).fill(0);
+  margins.forEach(v=>{const b=Math.floor((v-mn)/bw);if(b>=0&&b<bins)hist[b]++;});
+  const pk=Math.max(...hist);
+  const pad={l:20,r:8,t:6,b:22};
+  const cW=W-pad.l-pad.r,cH=H-pad.t-pad.b;
+  const bW=cW/bins;
+  hist.forEach((v,i)=>{
+    const x=pad.l+i*bW;
+    const h=(v/pk)*cH;
+    const isPos=i>=(bins/2);
+    ctx.fillStyle=isPos?'rgba(29,29,31,0.8)':'rgba(142,142,147,0.45)';
+    ctx.fillRect(x+.5,pad.t+cH-h,bW-1,h);
+  });
+  const zx=pad.l+((-mn)/( mx-mn))*cW;
+  ctx.beginPath();ctx.strokeStyle='rgba(0,0,0,0.2)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.moveTo(zx,pad.t);ctx.lineTo(zx,pad.t+cH);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='rgba(0,0,0,0.25)';ctx.font='9px Barlow';ctx.textAlign='center';
+  [-30,-15,0,15,30].forEach(v=>{const x=pad.l+((v-mn)/(mx-mn))*cW;ctx.fillText((v>0?'+':'')+v,x,H-4);});
+}
+
+function addLeg(){
+  const d=document.createElement('div');d.className='leg-row';
+  d.innerHTML='<input class="p-input" placeholder="Descripcion" type="text"><input class="p-input odds-in" placeholder="+110 o 2.1" type="text"><button class="rem-btn" onclick="remLeg(this)">x</button>';
+  document.getElementById('parlayLegs').appendChild(d);
+}
+function remLeg(b){const l=document.querySelectorAll('.leg-row');if(l.length<=1)return;b.closest('.leg-row').remove();}
+function toDec(s){
+  s=s.trim();
+  if(s.startsWith('+'))return isNaN(parseFloat(s.slice(1)))?null:1+parseFloat(s.slice(1))/100;
+  if(s.startsWith('-'))return isNaN(parseFloat(s.slice(1)))?null:1+100/parseFloat(s.slice(1));
+  return(isNaN(parseFloat(s))||parseFloat(s)<1)?null:parseFloat(s);
+}
+function calcParlay(){
+  const ins=document.querySelectorAll('.odds-in');
+  let total=1,ok=true;
+  ins.forEach(i=>{const d=toDec(i.value);if(!d){i.style.borderColor='#999';ok=false;}else{i.style.borderColor='';total*=d;}});
+  if(!ok){alert('Verifica las cuotas ingresadas.');return;}
+  const bet=parseFloat(document.getElementById('betAmt').value)||100;
+  const payout=(bet*total).toFixed(2);
+  const profit=(bet*total-bet).toFixed(2);
+  const prob=(1/total*100).toFixed(2);
+  const ev=(parseFloat(prob)/100*parseFloat(profit)-(1-parseFloat(prob)/100)*bet).toFixed(2);
+  document.getElementById('prOdds').textContent=total.toFixed(3)+'x';
+  document.getElementById('prPayout').textContent='$'+payout;
+  document.getElementById('prProfit').textContent='Ganancia neta: $'+profit;
+  document.getElementById('prProb').textContent=prob+'%';
+  document.getElementById('evFill').style.width=Math.min(100,parseFloat(prob))+'%';
+  document.getElementById('prEV').textContent=(parseFloat(ev)>0?'+':'')+'$'+ev;
+  document.getElementById('prEV').style.color=parseFloat(ev)>0?'var(--black)':'var(--muted)';
+  document.getElementById('prEVsub').textContent=parseFloat(ev)>0?'Valor positivo — ventaja estadistica a largo plazo':'Valor negativo — el mercado tiene ventaja en este parlay';
+  document.getElementById('parlayEmpty').style.display='none';
+  document.getElementById('parlayResult').style.display='block';
+}
+</script>
+</body>
+</html>
